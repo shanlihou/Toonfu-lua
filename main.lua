@@ -1,19 +1,10 @@
 package.path = package.path .. ';./lua/?.lua;./lua/?/init.lua'
 
-local debug = require "utils.debug"
-local coroutine_pools = require "utils.coroutine_pools"
-local protoc = require "utils.protoc"
-local test = require "test"
+local coroutine_pools = require "tf_api.coroutine_pools"
 
-local action = {}
 ---@class HttpResonse
 ---@field content string
 
----@param data Action
----@return string
-function action.http_response(data)
-    return coroutine_pools.resume_cb(data.coId, data.payload)
-end
 
 ---@class Gallery
 
@@ -57,4 +48,4 @@ function loop_once(data_list)
     return rets
 end
 
-test.test()
+-- test.test()

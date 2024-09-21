@@ -1164,7 +1164,8 @@ end
 function Parser:compile(s, name)
    if self == Parser then self = Parser.new() end
    local set = do_compile(self, self.parse, self, s, name)
-   return pb.encode('.google.protobuf.FileDescriptorSet', set)
+   local d = pb.encode('.google.protobuf.FileDescriptorSet', set)
+   return d
 end
 
 function Parser:compilefile(fn)

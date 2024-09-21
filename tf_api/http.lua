@@ -1,4 +1,4 @@
-local CoroutinePools = require "utils.coroutine_pools"
+local CoroutinePools = require "tf_api.coroutine_pools"
 
 local M = {}
 
