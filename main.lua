@@ -1,5 +1,3 @@
-package.path = package.path .. ';./lua/?.lua;./lua/?/init.lua'
-
 local coroutine_pools = require "tf_api.coroutine_pools"
 
 ---@class HttpResonse
