@@ -1,4 +1,6 @@
 local coroutine_pools = require "tf_api.coroutine_pools"
+local base = require "tf_api.base"
+local debug = require "tf_api.debug"
 
 ---@class HttpResonse
 ---@field content string
@@ -13,6 +15,7 @@ local coroutine_pools = require "tf_api.coroutine_pools"
 ---@field payload Gallery | HttpResonse
 ---@field plugin string
 
+
 ---@param data_list Action[]
 function loop_once(data_list)
     local rets = {}
@@ -22,27 +25,32 @@ function loop_once(data_list)
             local plugin = require("plugins." .. data.plugin)
             local func = plugin[data.type]
             if func then
-                local co = coroutine.create(function (_data)
-                    local ret = func(_data)
-                    return {
-                        retId = _data.retId,
-                        data = ret
-                    }
-                end)
-                local _, ret = coroutine.resume(co, data)
+                local co = coroutine_pools.create(data)
+
+                local _, ret = coroutine_pools.resume(co, func, data)
 
                 if ret ~= nil then
                     table.insert(rets, ret)
                 end
             end
         elseif data.coId ~= 0 then
-            local ret = coroutine_pools.resume_cb(data.coId, data.payload)
+            local _, ret = coroutine_pools.resume_cb(data.coId, data.payload)
 
             if ret ~= nil then
                 table.insert(rets, ret)
             end
+        else
+            local func = base[data.type]
+            if func then
+                local ret = func(data)
+                table.insert(rets, {
+                    retId = data.retId,
+                    data = ret
+                })
+            end
         end
     end
+
     return rets
 end
 
