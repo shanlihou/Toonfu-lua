@@ -32,6 +32,12 @@ function loop_once(data_list)
                 if ret ~= nil then
                     table.insert(rets, ret)
                 end
+            else
+                print('plugin method not found', data.plugin, data.type)
+                table.insert(rets, {
+                    retId = data.retId,
+                    data = {}
+                })
             end
         elseif data.coId ~= 0 then
             local _, ret = coroutine_pools.resume_cb(data.coId, data.payload)
