@@ -16,9 +16,9 @@ end
 ---@param url string
 ---@param path string
 ---@return table {code: number, content: string}
-function M.download(url, path)
+function M.download(url, path, kwargs)
     local cbid = CoroutinePools.gen_cb_id()
-    dart_http.download(cbid, url, path)
+    dart_http.download(cbid, url, path, kwargs)
     local ret = coroutine.yield()
     return ret
 end
