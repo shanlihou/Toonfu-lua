@@ -18,6 +18,7 @@ local debug = require "tf_api.debug"
 
 ---@param data_list Action[]
 function loop_once(data_list)
+    coroutine_pools.clear_timeout()
     local rets = {}
 
     for _, data in ipairs(data_list) do
@@ -33,7 +34,7 @@ function loop_once(data_list)
                     table.insert(rets, ret)
                 end
             else
-                print('plugin method not found', data.plugin, data.type)
+                dart_utils.log('plugin method not found:' .. tostring(data.plugin) .. ',' .. tostring(data.type))
                 table.insert(rets, {
                     retId = data.retId,
                     data = {}

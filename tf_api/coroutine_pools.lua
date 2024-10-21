@@ -4,7 +4,8 @@ local M = {}
 ---@field id number
 ---@field co thread
 ---@field ret_id number
----
+---@field create_time number
+
 ---@type table<number, CoroutineContext>
 local coroutine_pools = {}
 
@@ -14,7 +15,7 @@ function M.gen_cb_id()
     local id = coroutine.id(co)
 
     if coroutine_pools[id] == nil then
-        print('gen_cb_id id invalid')
+        dart_utils.log('gen_cb_id id invalid')
     end
 
     return id
@@ -44,6 +45,7 @@ function M.create(data)
     local co = coroutine.create(func_wrapper)
     local id = coroutine.id(co)
     coroutine_pools[id] = {
+        create_time = os.time(),
         id = id,
         co = co,
         ret_id = data.retId
@@ -59,7 +61,7 @@ function M.resume(co, func, data)
     local id = coroutine.id(co)
     local success, ret = coroutine.resume(co, func, data)
     if not success then
-        print('loop_once do func error', ret)
+        dart_utils.log('loop_once do func error:' .. tostring(ret))
         ret = {
             retId = coroutine_pools[id].ret_id,
             data = ret
@@ -77,7 +79,7 @@ function M.resume_cb(id, ...)
     if ctx then
         local success, ret = coroutine.resume(ctx.co, ...)
         if not success then
-            print('resume_cb do func error', ret)
+            dart_utils.log('resume_cb do func error:' .. tostring(ret))
             ret = {
                 retId = ctx.ret_id,
                 data = ret
@@ -88,6 +90,16 @@ function M.resume_cb(id, ...)
     end
 
     return false, nil
+end
+
+function M.clear_timeout()
+    local now = os.time()
+    for id, ctx in pairs(coroutine_pools) do
+        if now - ctx.create_time > 60 then
+            dart_utils.log('coroutine timeout:' .. tostring(id))
+            coroutine_pools[id] = nil
+        end
+    end
 end
 
 return M
