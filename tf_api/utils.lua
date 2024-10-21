@@ -1,3 +1,4 @@
+local CoroutinePools = require "tf_api.coroutine_pools"
 local M = {}
 
 
@@ -14,6 +15,15 @@ function M.init_plugin(plugin_name)
         .. ';'
         .. './' .. plugin_dir .. '/' .. plugin_name .. '/?.lua;'
         .. './' .. plugin_dir .. '/' .. plugin_name .. '/?/init.lua'
+end
+
+---@param delay_ms number
+---@return table {}
+function M.delay(delay_ms)
+    local cbid = CoroutinePools.gen_cb_id()
+    dart_os_ext.delay(cbid, delay_ms)
+    local ret = coroutine.yield()
+    return ret
 end
 
 return M
