@@ -26,7 +26,7 @@ function loop_once(data_list)
             local plugin = require("plugins." .. data.plugin)
             local func = plugin[data.type]
             if func then
-                local co = coroutine_pools.create(data)
+                local co = coroutine_pools.create(data, data.plugin)
 
                 local _, ret = coroutine_pools.resume(co, func, data)
 

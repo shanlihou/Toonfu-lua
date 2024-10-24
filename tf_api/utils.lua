@@ -26,4 +26,23 @@ function M.delay(delay_ms)
     return ret
 end
 
+
+function M.get_storage(key)
+    local plugin = CoroutinePools.get_plugin()
+    if plugin == nil then
+        return nil
+    end
+
+    return dart_utils.get_storage(plugin, key)
+end
+
+function M.set_storage(key, value)
+    local plugin = CoroutinePools.get_plugin()
+    if plugin == nil then
+        return nil
+    end
+
+    return dart_utils.set_storage(plugin, key, value)
+end
+
 return M

@@ -14,6 +14,17 @@ function M.get(url, kwargs)
 end
 
 ---@param url string
+---@param kwargs table
+---@return table {code: number, content: string}
+function M.post(url, kwargs)
+    local cbid = CoroutinePools.gen_cb_id()
+    dart_http.post(cbid, url, kwargs)
+    local ret = coroutine.yield()
+    return ret
+end
+
+
+---@param url string
 ---@param path string
 ---@return table {code: number, content: string}
 function M.download(url, path, kwargs)

@@ -41,16 +41,26 @@ end
 
 ---@param data Action
 ---@return thread
-function M.create(data)
+function M.create(data, plugin)
     local co = coroutine.create(func_wrapper)
     local id = coroutine.id(co)
     coroutine_pools[id] = {
         create_time = os.time(),
         id = id,
         co = co,
+        plugin = plugin,
         ret_id = data.retId
     }
     return co
+end
+
+---@return string?
+function M.get_plugin()
+    local id = coroutine.id(coroutine.running())
+    local ctx = coroutine_pools[id]
+    if ctx then
+        return ctx.plugin
+    end
 end
 
 ---@param co thread
